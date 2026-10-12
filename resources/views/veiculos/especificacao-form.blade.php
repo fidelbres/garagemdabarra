@@ -1,0 +1,21 @@
+@extends('layouts.app')
+@section('title',$especificacao->exists?'Editar aplicação':'Nova aplicação técnica')
+@section('content')
+@php($rotulos=['pneus'=>'Pneus e rodas','oleos_fluidos'=>'Óleos e fluidos','filtros'=>'Filtros','ignicao'=>'Ignição e velas','bateria'=>'Bateria','correias'=>'Correias','freios'=>'Freios','outros'=>'Outros'])
+<div class="page-head compact"><div><a class="back" href="{{route('veiculos.show',$veiculo)}}">← {{$veiculo->nome}}</a><span class="eyebrow">CATÁLOGO TÉCNICO DO VEÍCULO</span><h1>{{$especificacao->exists?'Editar aplicação':'Cadastrar aplicação'}}</h1><p>Registre a especificação correta e, separadamente, o componente atualmente instalado.</p></div></div>
+<form class="panel form" method="POST" action="{{$especificacao->exists?route('veiculos.especificacoes.update',[$veiculo,$especificacao]):route('veiculos.especificacoes.store',$veiculo)}}">@csrf @if($especificacao->exists)@method('PUT')@endif
+<div class="form-section"><div class="section-intro"><span class="eyebrow">APLICAÇÃO</span><h2>O que este carro usa</h2></div><div class="form-grid">
+<label>Categoria *<select required name="categoria"><option value="">Selecione</option>@foreach($categorias as $categoria)<option value="{{$categoria}}" @selected(old('categoria',$especificacao->categoria)===$categoria)>{{$rotulos[$categoria]}}</option>@endforeach</select></label>
+<label>Item *<input required name="item" value="{{old('item',$especificacao->item)}}" placeholder="Ex.: Filtro de óleo, pneu dianteiro, vela"></label>
+<label class="span-2">Serviço relacionado<select name="tipo_manutencao_id"><option value="">Nenhum serviço específico</option>@foreach($tipos->groupBy(fn($tipo)=>$tipo->sistema?->nome??'Geral') as $sistema=>$servicos)<optgroup label="{{$sistema}}">@foreach($servicos as $tipo)<option value="{{$tipo->id}}" @selected(old('tipo_manutencao_id',$especificacao->tipo_manutencao_id)==$tipo->id)>{{$tipo->nome}}</option>@endforeach</optgroup>@endforeach</select><small>Ao escolher este serviço na manutenção, esta referência será apresentada como consulta.</small></label>
+<label class="span-2">Especificação recomendada<textarea name="especificacao_recomendada" rows="3" placeholder="Ex.: 195/70 R15 97T · API SP 10W-40 · 60 Ah, polo positivo à direita">{{old('especificacao_recomendada',$especificacao->especificacao_recomendada)}}</textarea></label>
+<label>Marca preferida<input name="marca_preferida" value="{{old('marca_preferida',$especificacao->marca_preferida)}}"></label><label>Referência principal<input name="referencia" value="{{old('referencia',$especificacao->referencia)}}"></label>
+<label class="span-2">Referências equivalentes<textarea name="referencias_equivalentes" rows="2" placeholder="Uma ou mais referências compatíveis">{{old('referencias_equivalentes',$especificacao->referencias_equivalentes)}}</textarea></label>
+</div></div>
+<div class="form-section installed-spec-section"><div class="section-intro"><span class="eyebrow">INSTALADO ATUALMENTE</span><h2>O que está no carro</h2><p>Pode ficar em branco enquanto você estiver apenas documentando a aplicação correta.</p></div><div class="form-grid">
+<label>Marca instalada<input name="marca_instalada" value="{{old('marca_instalada',$especificacao->marca_instalada)}}"></label><label>Modelo<input name="modelo_instalado" value="{{old('modelo_instalado',$especificacao->modelo_instalado)}}"></label>
+<label>Referência instalada<input name="referencia_instalada" value="{{old('referencia_instalada',$especificacao->referencia_instalada)}}"></label><label>Data da instalação<input type="date" name="instalado_em" value="{{old('instalado_em',$especificacao->instalado_em?->format('Y-m-d'))}}"></label>
+<label>Quilometragem na instalação<input type="number" min="0" name="quilometragem_instalacao" value="{{old('quilometragem_instalacao',$especificacao->quilometragem_instalacao)}}"></label>
+<label class="span-2">Observações<textarea name="observacoes" rows="3">{{old('observacoes',$especificacao->observacoes)}}</textarea></label>
+</div></div><div class="form-actions"><a class="btn" href="{{route('veiculos.show',$veiculo)}}">Cancelar</a><button class="btn primary">Salvar aplicação</button></div></form>
+@endsection

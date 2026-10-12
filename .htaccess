@@ -1,0 +1,8 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # A Hostinger publica o repositório em public_html. Mantém o código do
+    # Laravel fora da URL e encaminha todas as requisições para a pasta public.
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

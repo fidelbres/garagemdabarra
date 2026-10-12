@@ -1,0 +1,11 @@
+@php($rotulosCategorias=['pneus'=>'Pneus e rodas','oleos_fluidos'=>'Óleos e fluidos','filtros'=>'Filtros','ignicao'=>'Ignição e velas','bateria'=>'Bateria','correias'=>'Correias','freios'=>'Freios','outros'=>'Outros'])
+<section class="panel vehicle-specs-panel">
+    <div class="panel-head"><div><span class="eyebrow">REFERÊNCIAS DO CARRO</span><h2>Aplicações e especificações</h2><p>Pneus, óleos, filtros, velas, bateria, correias e demais referências corretas.</p></div><a class="btn primary" href="{{route('veiculos.especificacoes.create',$veiculo)}}">＋ Cadastrar aplicação</a></div>
+    <div class="vehicle-spec-groups">
+        @forelse($veiculo->especificacoes->groupBy('categoria') as $categoria=>$especificacoes)
+        <section><h3>{{$rotulosCategorias[$categoria]??ucfirst($categoria)}}</h3><div class="vehicle-spec-list">
+            @foreach($especificacoes as $item)<article><div class="spec-main"><strong>{{$item->item}}</strong><span>{{$item->especificacao_recomendada?:'Especificação ainda não informada'}}</span>@if($item->marca_preferida||$item->referencia)<small>Preferência: {{collect([$item->marca_preferida,$item->referencia])->filter()->join(' · ')}}</small>@endif @if($item->referencias_equivalentes)<small>Equivalentes: {{$item->referencias_equivalentes}}</small>@endif</div><div class="spec-installed"><small>INSTALADO</small><strong>{{collect([$item->marca_instalada,$item->modelo_instalado,$item->referencia_instalada])->filter()->join(' · ')?:'Não informado'}}</strong>@if($item->instalado_em)<span>{{$item->instalado_em->format('d/m/Y')}}@if($item->quilometragem_instalacao) · {{number_format($item->quilometragem_instalacao,0,',','.')}} km @endif</span>@endif</div><div class="spec-actions">@if($item->tipoServico)<span class="badge muted">{{$item->tipoServico->nome}}</span>@endif<a href="{{route('veiculos.especificacoes.edit',[$veiculo,$item])}}">Editar</a><form method="POST" action="{{route('veiculos.especificacoes.destroy',[$veiculo,$item])}}" onsubmit="return confirm('Remover esta aplicação técnica?')">@csrf @method('DELETE')<button>Remover</button></form></div></article>@endforeach
+        </div></section>
+        @empty<div class="empty"><p>Nenhuma aplicação técnica cadastrada para este veículo.</p><small>Comece pelos pneus, óleo do motor, filtros, velas e bateria.</small></div>@endforelse
+    </div>
+</section>
