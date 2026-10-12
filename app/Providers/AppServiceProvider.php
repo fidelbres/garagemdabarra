@@ -20,7 +20,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if (! $this->app->runningInConsole()) {
-            config(['filesystems.disks.public.url' => request()->getBaseUrl().'/midia']);
+            config(['filesystems.disks.public.url' => request()->getBaseUrl().'/storage']);
         }
     }
 }
