@@ -12,10 +12,21 @@ class OficinaSeeder extends Seeder
     {
         $agora = now();
 
-        DB::table('users')->updateOrInsert(
-            ['email' => 'admin@garagemdabarra.com.br'],
-            ['name' => 'Administrador', 'password' => Hash::make('Garagem@2026'), 'tipo' => 'administrador', 'ativo' => true, 'created_at' => $agora, 'updated_at' => $agora],
-        );
+        $senhaAdministrador = env('ADMIN_PASSWORD');
+
+        if ($senhaAdministrador) {
+            DB::table('users')->updateOrInsert(
+                ['email' => env('ADMIN_EMAIL', 'admin@garagemdabarra.com.br')],
+                [
+                    'name' => env('ADMIN_NAME', 'Administrador'),
+                    'password' => Hash::make($senhaAdministrador),
+                    'tipo' => 'administrador',
+                    'ativo' => true,
+                    'created_at' => $agora,
+                    'updated_at' => $agora,
+                ],
+            );
+        }
 
         $sistemas = [
             ['Geral e diagnóstico', '⌕'], ['Motor', '⚙'], ['Arrefecimento', '◉'], ['Alimentação e combustível', '◈'],
