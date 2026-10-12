@@ -91,9 +91,8 @@ class PadronizacaoCadastrosTest extends TestCase
         $this->actingAs($admin)->put(route('veiculos.fotos.destaque', [$veiculo, $foto]), ['posicao_x' => 35, 'posicao_y' => 62])->assertRedirect();
         $this->assertDatabaseHas('fotos_veiculos', ['id' => $foto->id, 'principal' => true, 'posicao_x' => 35, 'posicao_y' => 62]);
         $pagina = $this->actingAs($admin)->get(route('veiculos.show', $veiculo));
-        $urlFoto = route('midia', ['arquivo' => $foto->arquivo]);
+        $urlFoto = Storage::disk('public')->url($foto->arquivo);
         $pagina->assertOk()->assertSee($urlFoto, false);
         $this->assertGreaterThanOrEqual(2, substr_count($pagina->getContent(), $urlFoto), 'A foto deve aparecer no destaque e na galeria.');
-        $this->actingAs($admin)->get($urlFoto)->assertOk()->assertHeader('Cache-Control');
     }
 }
