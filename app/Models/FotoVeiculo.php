@@ -20,6 +20,6 @@ class FotoVeiculo extends Model
             return '';
         }
 
-        return route('midia', ['arquivo' => $this->arquivo]);
+        return Storage::disk('public')->url($this->arquivo);
     }
 }
